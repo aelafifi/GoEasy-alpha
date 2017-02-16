@@ -1,0 +1,27 @@
+#toastr-loading .overlay {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	z-index: 8000000;
+}
+
+#toastr-loading .content {
+	position: fixed;
+	z-index: 9000000;
+	overflow: hidden;
+	padding: 15px;
+	text-align: center;
+	width: 320px;
+	line-height: 30px;
+	border-radius: 3px;
+	background: #000;
+	color: #fff;
+	opacity: 0.9;
+	left: 50%;
+	top: 50%;
+	margin-left: -160px;
+	margin-top: -30px;
+}
