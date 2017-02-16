@@ -1,0 +1,18 @@
+#= GOEASY_ROOT
+
+RewriteEngine on
+
+RewriteCond %{REQUEST_SCHEME}://%{HTTP_HOST}%{REQUEST_URI}#$0 ^(:?)(.*)/(.*)#(\3)$
+RewriteRule (.*) index.php?rt=$0&base_url=%2&current_url=%2/%3 [QSA,L]
+
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/css application/x-javascript text/x-component text/html text/richtext image/svg+xml text/plain text/xsd text/xsl text/xml image/x-icon application/javascript text/javascript
+	<IfModule mod_setenvif.c>
+		BrowserMatch ^Mozilla/4 gzip-only-text/html
+		BrowserMatch ^Mozilla/4\.0[678] no-gzip
+		BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+	</IfModule>
+	<IfModule mod_headers.c>
+		Header append Vary User-Agent env=!dont-vary
+	</IfModule>
+</IfModule>
