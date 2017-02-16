@@ -7,7 +7,7 @@ class MySQL {
 	private static $hostname = "localhost";
 	private static $username = "root";
 	private static $password = "";
-	private static $database = "insan";
+	private static $database = "test";
 	private static $charset  = "utf8";
 
 	protected static function conn() {
