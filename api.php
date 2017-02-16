@@ -1,12 +1,5 @@
 <?php
 
-function nextId() {
-	return 'i' . base_convert(
-		hexdec(uniqid()) +
-		intval(rand(1e16, 1e17-1)),
-	10, 36);
-}
-
 function arrayQuery($array, $options=null)
 {
 
