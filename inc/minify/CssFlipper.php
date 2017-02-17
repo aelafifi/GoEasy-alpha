@@ -157,6 +157,38 @@ class CssFlipper
 		return $prop;
 	}
 
+	public function flipTransform($value) {
+		return preg_replace_callback("/(\w+)\(([^\(\)]*)\)/", function($matches) {
+			$flipSome = function($data, $items=[]) {
+				foreach ($data[3] as $i => $item) {
+					$data[3][$i] = in_array($i, $items) ?
+						(-1 * $item[1]) . $item[2] :
+						$data[3][$i] = $item[0];
+				}
+				return $data[1] . "(" . implode(", ", $data[3]) . ")";
+			};
+			$values = preg_split("/\s*,\s*/", trim($matches[2]));
+			foreach ($values as $val) {
+				preg_match("/^([-+]?\d*\.?\d+)([\w%]*)$/", $val, $match);
+				$matches[3][] = $match;
+			}
+			switch ($matches[1]) {
+				case 'translate':   return $flipSome($matches, [0]);
+				case 'translateX':  return $flipSome($matches, [0]);
+				case 'translate3d': return $flipSome($matches, [0]);
+				case 'skew':        return $flipSome($matches, [0, 1]);
+				case 'skewX':       return $flipSome($matches, [0]);
+				case 'skewY':       return $flipSome($matches, [0]);
+				case 'rotate':      return $flipSome($matches, [0]);
+				case 'rotateX':     return $flipSome($matches, [0]);
+				case 'rotateY':     return $flipSome($matches, [0]);
+				case 'rotateZ':     return $flipSome($matches, [0]);
+				case 'rotate3d':    return $flipSome($matches, [0, 1, 2]);
+			}
+			return $matches[0];
+		}, $value);
+	}
+
 	public function flipLeftRight($value) {
 		return preg_match("/left/", $value) ? 'right' : (
 			preg_match("/right/", $value) ? 'left' : $value
@@ -199,7 +231,7 @@ class CssFlipper
 			$RE_PROP = "/^\s*([a-zA-z\-]+)/";
 			if (preg_match($RE_PROP, $part, $matches)) {
 				$prop = $matches[1];
-				$newProp = flipProperty($prop);
+				$newProp = $this->flipProperty($prop);
 				$part = implode($newProp, explode($prop, $part, 2));
 			}
 			return $part;
@@ -208,7 +240,6 @@ class CssFlipper
 
 		return implode(", ", $parts_map);
 	}
-
 
 	public function flipValueOf($prop, $value) {
 		$VALUES = [
@@ -226,7 +257,10 @@ class CssFlipper
 		  'padding' => 'flipQuad',
 		  'text-align' => 'flipLeftRight',
 		  'transition' => 'flipTransition',
-		  'transition-property' => 'flipTransition'
+		  'transition-property' => 'flipTransition',
+		  'transform' => 'flipTransform',
+		  'transform-origin' => 'flipBackgroundPosition',
+		  'perspective-origin' => 'flipBackgroundPosition',
 		];
 
 		$RE_IMPORTANT = "/\s*!important/";
@@ -274,8 +308,6 @@ class CssFlipper
 
 }
 
-
-
 // $css = "@media all {
 // 	a {
 // 		left: 0px !important;
@@ -284,6 +316,8 @@ class CssFlipper
 // 		margin: 1 2 3 4 !important;
 // 		border-width: 1 2 3 4;
 // 		border-radius: 1 2 3 4;
+// 		transform: translate(2px, 0) rotate(30deg) scale(1.2);
+// 		transform-origin: 20% 30%;
 // 	}
 // }
 // ";
